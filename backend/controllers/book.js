@@ -17,7 +17,7 @@ exports.createBook = (req, res, next) => {
   };
 
   if (req.file) {
-    newBook.imageUrl = `${req.protocol}://${req.get('host')}/images/resized_${req.file.filename}`;
+    newBook.imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
   }
 
   const book = new BookThing(newBook);
@@ -37,8 +37,8 @@ exports.createBook = (req, res, next) => {
 exports.modifyBook = (req, res, next) => {
   // Vérifie si un fichier (image) est joint à la demande
   const bookObject = req.file ? {
-      ...JSON.parse(req.body.book),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/resized_${req.file.filename}`
+    ...JSON.parse(req.body.book),
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   } : { ...req.body };
  
   delete bookObject._userId;
@@ -70,22 +70,26 @@ exports.modifyBook = (req, res, next) => {
 
 /* Supprime un livre */
 exports.deleteBook = (req, res, next) => {
-    BookThing.findOne({ _id: req.params.id})
-       .then(book => {
-           if (book.userId != req.auth.userId) {
-               res.status(401).json({message: 'Vous ne pouvez pas supprimer ce livre'});
-           } else {
-               const filename = book.imageUrl.split('/images/')[1];
-               fs.unlink(`images/${filename}`, () => {
-                   BookThing.deleteOne({_id: req.params.id})
-                       .then(() => { res.status(200).json({message: 'Livre supprimé !'}) }) 
-                       .catch(error => res.status(401).json({ error })); 
-               });
-           }
-       })
-       .catch( error => {
-           res.status(500).json({ error }); 
-       });
+  BookThing.findOne({ _id: req.params.id })
+      .then(book => {
+          if (book.userId != req.auth.userId) {
+              res.status(401).json({ message: 'Vous ne pouvez pas supprimer ce livre' });
+          } else {
+              const filename = book.imageUrl.split('/images/')[1];
+              fs.unlink(`images/${filename}`, (err) => {
+                  BookThing.deleteOne({ _id: req.params.id })
+                      .then(() => {
+                          res.status(200).json({ message: 'Livre supprimé !' });
+                      })
+                      .catch(error => {
+                          res.status(500).json({ error });
+                      });
+              });
+          }
+      })
+      .catch(error => {
+          res.status(500).json({ error });
+      });
 };
 
 
