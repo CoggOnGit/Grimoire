@@ -17,7 +17,7 @@ exports.createBook = (req, res, next) => {
   };
 
   if (req.file) {
-    newBook.imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    newBook.imageUrl = `${req.protocol}://${req.get('host')}/images/resized_${req.file.filename}`;
   }
 
   const book = new BookThing(newBook);
@@ -37,8 +37,8 @@ exports.createBook = (req, res, next) => {
 exports.modifyBook = (req, res, next) => {
   // Vérifie si un fichier (image) est joint à la demande
   const bookObject = req.file ? {
-    ...JSON.parse(req.body.book),
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      ...JSON.parse(req.body.book),
+      imageUrl: `${req.protocol}://${req.get('host')}/images/resized_${req.file.filename}`
   } : { ...req.body };
  
   delete bookObject._userId;

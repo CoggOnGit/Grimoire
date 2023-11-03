@@ -1,3 +1,8 @@
+require('dotenv').config();
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_URL = process.env.DB_URL;
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -6,7 +11,7 @@ const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user');
 
 // Connexion BDD
-mongoose.connect('mongodb+srv://User-Grimoire:azerty@cluster0.21uvt8w.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}${DB_URL}`,
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));

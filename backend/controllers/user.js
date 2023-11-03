@@ -1,3 +1,6 @@
+require('dotenv').config();
+const SECRET_KEY=process.env.SECRET_KEY;
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -39,7 +42,7 @@ exports.login = (req, res, next) => {
                         userId: user._id, 
                         token: jwt.sign(
                             { userId: user._id},
-                            'RANDOM_TOKEN_SECRET', // Clé secrète du token 
+                            SECRET_KEY, // Clé secrète du token 
                             { expiresIn: '24h' } 
                         )
                     });

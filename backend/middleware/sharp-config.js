@@ -11,7 +11,7 @@ const resizeImage = (req, res, next) => {
 
   const filePath = req.file.path;
   const fileName = req.file.filename;
-  const outputFilePath = path.join('images', `${fileName}`);
+  const outputFilePath = path.join('images', `resized_${fileName}`);
 
   // Sharp pour redimensionner l'image
   sharp(filePath)
